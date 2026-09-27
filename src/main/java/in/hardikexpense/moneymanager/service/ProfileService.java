@@ -4,6 +4,7 @@ import in.hardikexpense.moneymanager.dto.AuthDTO;
 import in.hardikexpense.moneymanager.dto.ProfileDTO;
 import in.hardikexpense.moneymanager.entity.ProfileEntity;
 import in.hardikexpense.moneymanager.repository.ProfileRepository;
+import in.hardikexpense.moneymanager.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,6 +25,7 @@ public class ProfileService {
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final JWTUtil jwtUtil;
 
     public ProfileDTO registerProfile(ProfileDTO profileDTO){
 
@@ -107,7 +109,7 @@ public class ProfileService {
         try{
             authenticationManager.authenticate((new UsernamePasswordAuthenticationToken(authDTO.getEmail(),authDTO.getPassword())));
             return Map.of(
-                    "token" , "JWT token",
+                    "token" , jwtUtil.generateToken(authDTO.getEmail()),
                     "user" , getPublicProfile(authDTO.getEmail())
             );
         }catch (Exception e){
