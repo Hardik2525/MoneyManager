@@ -37,6 +37,10 @@ public class JWTUtil {
         return parseClaims(token).getSubject();
     }
 
+    public String extractUsername(String token) {
+        return (String) parseClaims(token).get("username", String.class);
+    }
+
     public boolean validateToken(String token) {
         try {
             parseClaims(token);
