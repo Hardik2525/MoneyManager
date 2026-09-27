@@ -33,11 +33,10 @@ public class ProfileService {
         // Send Activation Email
         String activationLink =
                 "http://localhost:8080/api/v1.0/activate?token=" + newProfile.getActivationToken();
-        String subject = "Activate ur Money manager account";
+        String subject = "MONEY MANAGER | Activate your Money Manager account";
         String emailBody = "Click on the following link to activate your account: " + activationLink;
         emailService.sendEmail(newProfile.getEmail(),subject,emailBody);
         return toDTO(newProfile);
-
     }
 
     public ProfileEntity toEntity(ProfileDTO profileDTO){
