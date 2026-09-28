@@ -27,7 +27,7 @@ public class CategoryService {
         return mapToDTO(savedCategory);
     }
 
-    public List<CategoryDTO> getCategoriesforCurrentUser() {
+    public List<CategoryDTO> getCategoriesForCurrentUser() {
         ProfileEntity profile = profileService.getCurrentProfile();
         List<CategoryEntity> categories = categoryRespository.findByProfileId(profile.getId());
         return categories.stream().map(this::mapToDTO).collect(Collectors.toList());
@@ -53,5 +53,22 @@ public class CategoryService {
             .updatedAt(categoryEntity.getUpdatedAt())
             .profileId(categoryEntity.getProfile().getId())
             .build();
+    }
+
+    public List<CategoryDTO> getCategoriesByTypeForCurrentUser(String type){
+        ProfileEntity profile = profileService.getCurrentProfile();
+        List<CategoryEntity> categoryByTypeForCurrentUser = categoryRespository.findByProfileIdAndType(profile.getId(), type);
+        return categoryByTypeForCurrentUser.stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
+
+    public CategoryDTO updateCategory(Long categoryId , CategoryDTO dto){
+        ProfileEntity profile = profileService.getCurrentProfile();
+        CategoryEntity existing = categoryRespository.findByIdAndProfileId(categoryId, profile.getId())
+                .orElseThrow(() -> new RuntimeException("Category not found or inaccessible"));
+        existing.setName((dto.getName()));
+        existing.setIcon(dto.getIcon());
+        existing = categoryRespository.save(existing);
+        return mapToDTO(existing);
+
     }
 }

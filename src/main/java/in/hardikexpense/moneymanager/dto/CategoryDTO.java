@@ -1,15 +1,14 @@
 package in.hardikexpense.moneymanager.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CategoryDTO {
     private Long id;
     private String name;
@@ -17,5 +16,5 @@ public class CategoryDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String icon;
-    private String profileId;
+    private Long profileId;
 }

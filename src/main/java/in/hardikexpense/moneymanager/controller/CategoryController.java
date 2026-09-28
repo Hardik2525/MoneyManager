@@ -1,16 +1,13 @@
 package in.hardikexpense.moneymanager.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.parameters.P;
+import org.springframework.web.bind.annotation.*;
 import in.hardikexpense.moneymanager.dto.CategoryDTO;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import in.hardikexpense.moneymanager.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("/categories")
@@ -26,9 +23,21 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryDTO>> getCategoriesforCurrentUser() {
-        List<CategoryDTO> categories = categoryService.getCategoriesforCurrentUser();
+    public ResponseEntity<List<CategoryDTO>> getCategoriesForCurrentUser() {
+        List<CategoryDTO> categories = categoryService.getCategoriesForCurrentUser();
         return ResponseEntity.status(HttpStatus.OK).body(categories);
+    }
+
+    @GetMapping("/{type}")
+    public ResponseEntity<List<CategoryDTO>> getCategoriesByTypeForCurrentUser(@PathVariable String type){
+        List<CategoryDTO> cats = categoryService.getCategoriesByTypeForCurrentUser(type);
+        return ResponseEntity.status(HttpStatus.OK).body(cats);
+    }
+
+    @PutMapping("/{categoryId}")
+    public ResponseEntity<CategoryDTO> updateCategory(@PathVariable Long categoryId ,@RequestBody CategoryDTO categoryDTO){
+        CategoryDTO updateCategory = categoryService.updateCategory(categoryId,categoryDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(updateCategory);
     }
     
 }
