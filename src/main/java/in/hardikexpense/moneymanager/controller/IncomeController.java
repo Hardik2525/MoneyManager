@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import lombok.RequiredArgsConstructor;
 import in.hardikexpense.moneymanager.dto.IncomeDTO;
 import in.hardikexpense.moneymanager.service.IncomeService;
-
+import java.util.List;
 @RestController
 @RequestMapping("/incomes")
 @RequiredArgsConstructor
@@ -19,5 +19,11 @@ public class IncomeController {
     public ResponseEntity<IncomeDTO> addIncome(@RequestBody IncomeDTO incomeDTO) {
         IncomeDTO savedIncome = incomeService.addIncome(incomeDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedIncome);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<IncomeDTO>> getCurrentMonthIncomesForCurrentUser() {
+        List<IncomeDTO> incomes = incomeService.getCurrentMonthIncomesForCurrentUser();
+        return ResponseEntity.status(HttpStatus.OK).body(incomes);
     }
 }
