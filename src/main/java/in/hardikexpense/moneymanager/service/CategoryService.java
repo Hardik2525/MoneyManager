@@ -2,7 +2,7 @@ package in.hardikexpense.moneymanager.service;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import in.hardikexpense.moneymanager.repository.CategoryRespository;
+import in.hardikexpense.moneymanager.repository.CategoryRepository;
 import in.hardikexpense.moneymanager.dto.CategoryDTO;
 import in.hardikexpense.moneymanager.entity.CategoryEntity;
 import in.hardikexpense.moneymanager.entity.ProfileEntity;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Service
 @Builder
 public class CategoryService {
-    private final CategoryRespository categoryRespository;
+    private final CategoryRepository categoryRespository;
     private final ProfileService profileService;
 
     public CategoryDTO saveCategory(CategoryDTO categoryDTO) {

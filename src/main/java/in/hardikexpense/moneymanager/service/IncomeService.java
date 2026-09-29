@@ -9,7 +9,9 @@ import in.hardikexpense.moneymanager.entity.ProfileEntity;
 import in.hardikexpense.moneymanager.dto.IncomeDTO;
 import in.hardikexpense.moneymanager.entity.CategoryEntity;
 import lombok.RequiredArgsConstructor;
-
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class IncomeService {
@@ -25,6 +27,17 @@ public class IncomeService {
         IncomeEntity savedIncome = incomeRepository.save(incomeEntity);
         return mapToDTO(savedIncome);
      }
+
+
+    //Retreive all incomes for a profile based on start and end date
+    public List<IncomeDTO> getCurrentMonthIncomesForCurrentUser() {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        LocalDate now = LocalDate.now();
+        LocalDate startDate = now.withDayOfMonth(1);
+        LocalDate endDate = now.withDayOfMonth(now.lengthOfMonth());
+        List<IncomeEntity> incomes = incomeRepository.findByProfileIdAndDateBetween(profile.getId(), startDate, endDate);
+        return incomes.stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
 
     private IncomeEntity mapToEntity(IncomeDTO incomeDTO, ProfileEntity profile, CategoryEntity category) {
         return IncomeEntity.builder()

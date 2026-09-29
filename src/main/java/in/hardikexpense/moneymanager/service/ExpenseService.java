@@ -9,6 +9,9 @@ import in.hardikexpense.moneymanager.dto.ExpenseDTO;
 import in.hardikexpense.moneymanager.entity.ExpenseEntity;
 import in.hardikexpense.moneymanager.entity.ProfileEntity;
 import in.hardikexpense.moneymanager.entity.CategoryEntity;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +28,16 @@ public class ExpenseService {
        ExpenseEntity savedExpense = expenseRepository.save(expenseEntity);
        return mapToDTO(savedExpense);
     }
+
+    //Retreive all expenses for a profile based on start and end date
+    public List<ExpenseDTO> getCurrentMonthExpensesForCurrentUser() {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        LocalDate now = LocalDate.now();
+        LocalDate startDate = now.withDayOfMonth(1);
+        LocalDate endDate = now.withDayOfMonth(now.lengthOfMonth());
+        List<ExpenseEntity> expenses = expenseRepository.findByProfileIdAndDateBetween(profile.getId(), startDate, endDate);
+        return expenses.stream().map(this::mapToDTO).collect(Collectors.toList());
+    }   
 
     private ExpenseEntity mapToEntity(ExpenseDTO expenseDTO, ProfileEntity profile, CategoryEntity category) {
         return ExpenseEntity.builder()
