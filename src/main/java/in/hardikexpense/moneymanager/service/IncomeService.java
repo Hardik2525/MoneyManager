@@ -1,5 +1,7 @@
 package in.hardikexpense.moneymanager.service;
 
+import in.hardikexpense.moneymanager.dto.ExpenseDTO;
+import in.hardikexpense.moneymanager.entity.ExpenseEntity;
 import org.springframework.stereotype.Service;
 
 import in.hardikexpense.moneymanager.repository.IncomeRepository;
@@ -9,6 +11,8 @@ import in.hardikexpense.moneymanager.entity.ProfileEntity;
 import in.hardikexpense.moneymanager.dto.IncomeDTO;
 import in.hardikexpense.moneymanager.entity.CategoryEntity;
 import lombok.RequiredArgsConstructor;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +32,15 @@ public class IncomeService {
         return mapToDTO(savedIncome);
      }
 
+    public void deleteIncome(Long incomeId){
+        ProfileEntity profile = profileService.getCurrentProfile();
+        IncomeEntity entity = incomeRepository.findById(incomeId)
+                .orElseThrow(() -> new RuntimeException("Income not found"));
+        if(!entity.getProfile().getId().equals(profile.getId())) {
+            throw new RuntimeException("Unauthorized to delete this income");
+        }
+        incomeRepository.delete(entity);
+    }
 
     //Retreive all incomes for a profile based on start and end date
     public List<IncomeDTO> getCurrentMonthIncomesForCurrentUser() {
@@ -37,6 +50,19 @@ public class IncomeService {
         LocalDate endDate = now.withDayOfMonth(now.lengthOfMonth());
         List<IncomeEntity> incomes = incomeRepository.findByProfileIdAndDateBetween(profile.getId(), startDate, endDate);
         return incomes.stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
+
+    //Get latest 5 expenses for the current user
+    public List<IncomeDTO> getLatest5IncomesForCurrentUser(){
+        ProfileEntity profile = profileService.getCurrentProfile();
+        List<IncomeEntity> entity = incomeRepository.findTop5ByProfileIdOrderByDateDesc(profile.getId());
+        return entity.stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
+
+    public BigDecimal getTotalIncomesForCurrentUser(){
+        ProfileEntity profile = profileService.getCurrentProfile();
+        BigDecimal total =  incomeRepository.findTotalExpenseByProfileId(profile.getId());
+        return total !=null ? total : BigDecimal.ZERO;
     }
 
     private IncomeEntity mapToEntity(IncomeDTO incomeDTO, ProfileEntity profile, CategoryEntity category) {

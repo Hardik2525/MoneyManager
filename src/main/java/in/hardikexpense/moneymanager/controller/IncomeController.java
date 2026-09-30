@@ -1,9 +1,6 @@
 package in.hardikexpense.moneymanager.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import lombok.RequiredArgsConstructor;
@@ -25,5 +22,11 @@ public class IncomeController {
     public ResponseEntity<List<IncomeDTO>> getCurrentMonthIncomesForCurrentUser() {
         List<IncomeDTO> incomes = incomeService.getCurrentMonthIncomesForCurrentUser();
         return ResponseEntity.status(HttpStatus.OK).body(incomes);
+    }
+
+    @DeleteMapping("/{incomeId}")
+    public ResponseEntity<Void> deleteIncome(@PathVariable Long incomeId){
+        incomeService.deleteIncome(incomeId);
+        return ResponseEntity.noContent().build();
     }
 }
