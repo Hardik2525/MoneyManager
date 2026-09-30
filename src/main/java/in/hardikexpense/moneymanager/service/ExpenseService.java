@@ -3,6 +3,7 @@ package in.hardikexpense.moneymanager.service;
 import lombok.RequiredArgsConstructor;
 import in.hardikexpense.moneymanager.repository.ExpenseRepository;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import in.hardikexpense.moneymanager.repository.CategoryRepository;
 import in.hardikexpense.moneymanager.dto.ExpenseDTO;
@@ -63,6 +64,13 @@ public class ExpenseService {
         ProfileEntity profile = profileService.getCurrentProfile();
         BigDecimal total =  expenseRepository.findTotalExpenseByProfileId(profile.getId());
         return total !=null ? total : BigDecimal.ZERO;
+    }
+
+    public List<ExpenseDTO> filterExpenses(LocalDate startDate, LocalDate endDate, String keyword, Sort sort){
+        ProfileEntity profile = profileService.getCurrentProfile();
+        List<ExpenseEntity> list = expenseRepository.findByProfileIdAndDateBetweenAndNameContainingIgnoreCase
+                (profile.getId(),startDate,endDate,keyword,sort);
+        return list.stream().map(this::mapToDTO).toList();
     }
 
     private ExpenseEntity mapToEntity(ExpenseDTO expenseDTO, ProfileEntity profile, CategoryEntity category) {
