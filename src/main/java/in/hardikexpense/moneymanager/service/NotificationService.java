@@ -1,6 +1,7 @@
 package in.hardikexpense.moneymanager.service;
 
 
+import in.hardikexpense.moneymanager.dto.ExpenseDTO;
 import in.hardikexpense.moneymanager.entity.ProfileEntity;
 import in.hardikexpense.moneymanager.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -24,8 +26,8 @@ public class NotificationService {
     private String frontEndUrl;
 
 
-    @Scheduled(cron = "0 * * * * *", zone = "IST")
-    //@Scheduled(cron = "0 0 22 * * *", zone = "IST")
+    //@Scheduled(cron = "0 * * * * *", zone = "IST")
+    @Scheduled(cron = "0 0 22 * * *", zone = "IST")
     public void sendDailyIncomeExpenseReminder(){
         log.info("Job started: sendDailyIncomeExpenseReminder");
         List<ProfileEntity> profiles = profileRepository.findAll();
@@ -43,7 +45,21 @@ public class NotificationService {
                     HtmlUtils.htmlEscape(profile.getFullName()),
                     HtmlUtils.htmlEscape(updateUrl)
             );
-            emailService.sendHtmlEmail(profile.getEmail(), "Friendly Reminder to Update Daily Income and Expense", body);
+            emailService.sendEmail(profile.getEmail(), "Friendly Reminder to Update Daily Income and Expense", body);
+        }
+        log.info("Job completed : sendDailyIncomeExpenseReminder()");
+    }
+
+    @Scheduled(cron = "0 0 23 * * *", zone = "IST")
+    public void sendDailyExpenseSummary(){
+        log.info("Job started: sendDailyExpenseSummary()");
+        List<ProfileEntity> profiles = profileRepository.findAll();
+        for(ProfileEntity profile : profiles){
+            List<ExpenseDTO> todaysExpenses = expenseService.getExpensesForUserOnDate(profile.getId(), LocalDate.now());
+            if(!todaysExpenses.isEmpty()){
+                StringBuilder table = new StringBuilder();
+                table.append("")
+            }
         }
     }
 
