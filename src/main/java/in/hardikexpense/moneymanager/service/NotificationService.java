@@ -50,7 +50,8 @@ public class NotificationService {
         log.info("Job completed : sendDailyIncomeExpenseReminder()");
     }
 
-    @Scheduled(cron = "0 0 23 * * *", zone = "IST")
+    //@Scheduled(cron = "0 0 23 * * *", zone = "IST")
+    @Scheduled(cron = "0 * * * * *", zone = "IST")
     public void sendDailyExpenseSummary(){
         log.info("Job started: sendDailyExpenseSummary()");
         List<ProfileEntity> profiles = profileRepository.findAll();
@@ -58,7 +59,23 @@ public class NotificationService {
             List<ExpenseDTO> todaysExpenses = expenseService.getExpensesForUserOnDate(profile.getId(), LocalDate.now());
             if(!todaysExpenses.isEmpty()){
                 StringBuilder table = new StringBuilder();
-                table.append("")
+                table.append("<table style='border-collapse: collapse; width: 100%;'>");
+                table.append("<tr><th style='border: 1px solid #ddd; padding: 8px;'>Category</th><th style='border: 1px solid #ddd; padding: 8px;'>Amount</th></tr>");
+                for(ExpenseDTO expense : todaysExpenses){
+                    table.append("<tr><td style='border: 1px solid #ddd; padding: 8px;'>").append(expense.getCategoryName()).append("</td><td style='border: 1px solid #ddd; padding: 8px;'>").append(expense.getAmount()).append("</td></tr>");
+                }
+                table.append("</table>");
+                String body = String.format(
+                    "<html><body style=\"font-family: Arial, sans-serif; color: #333;\">" +
+                    "<p>Hi %s,</p>" +
+                    "<p>This is a summary of your expenses for today:</p>" +
+                    "<p>%s</p>" +
+                    "<p><br><br>Best regards,<br>Money Manager Team</p>" +
+                    "</body></html>",
+                    HtmlUtils.htmlEscape(profile.getFullName()),
+                    HtmlUtils.htmlEscape(table.toString())
+                );
+                emailService.sendEmail(profile.getEmail(), "Daily Expense Summary", body);
             }
         }
     }
