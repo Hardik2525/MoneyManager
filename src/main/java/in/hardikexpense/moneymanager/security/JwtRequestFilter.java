@@ -23,6 +23,16 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private final JWTUtil jwtUtil;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        return path.equals("/register")
+                || path.equals("/login")
+                || path.equals("/activate")
+                || path.equals("/status")
+                || path.equals("/health");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         final String authorizationHeader = request.getHeader("Authorization");

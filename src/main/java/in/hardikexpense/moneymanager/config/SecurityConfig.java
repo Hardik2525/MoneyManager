@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password4j.BcryptPassword4jPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import in.hardikexpense.moneymanager.security.JwtRequestFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -32,8 +31,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity){
      httpSecurity.cors(Customizer.withDefaults())
             .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth->auth.requestMatchers("/status","/health","/register","/activate","/login").permitAll()
-            .anyRequest().authenticated())
+            .authorizeHttpRequests(auth->auth
+                    .requestMatchers("/status","/health","/register","/activate","/login").permitAll()
+                    .anyRequest().authenticated())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
@@ -44,11 +44,12 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(List.of("*"));
-        configuration.setAllowedMethods((List.of("GET","POST","PUT","DELETE","OPTIONS")));
-        configuration.setAllowedHeaders(List.of("Authorization","Content_Type","Accept"));
+        configuration.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
+        configuration.setAllowedHeaders(List.of("Authorization","Content-Type","Accept","Origin"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**",configuration);
