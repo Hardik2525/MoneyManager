@@ -6,6 +6,7 @@ import in.hardikexpense.moneymanager.entity.ProfileEntity;
 import in.hardikexpense.moneymanager.repository.ProfileRepository;
 import in.hardikexpense.moneymanager.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +23,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ProfileService {
 
     private final ProfileRepository profileRepository;
@@ -57,11 +59,12 @@ public class ProfileService {
                 HtmlUtils.htmlEscape(activationLink)
         );
         String recipientEmail = newProfile.getEmail();
+        log.info("Profile saved for {}. Queuing activation email.", recipientEmail);
         CompletableFuture.runAsync(() -> {
             try {
                 emailService.sendHtmlEmail(recipientEmail, subject, emailBody);
             } catch (Exception e) {
-                System.err.println("Failed to send activation email: " + e.getMessage());
+                log.error("Failed to send activation email to {}", recipientEmail, e);
             }
         });
 
