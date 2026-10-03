@@ -45,7 +45,7 @@ public class NotificationService {
                     HtmlUtils.htmlEscape(profile.getFullName()),
                     HtmlUtils.htmlEscape(updateUrl)
             );
-            emailService.sendEmail(profile.getEmail(), "Friendly Reminder to Update Daily Income and Expense", body);
+            emailService.sendHtmlEmail(profile.getEmail(), "Friendly Reminder to Update Daily Income and Expense", body);
         }
         log.info("Job completed : sendDailyIncomeExpenseReminder()");
     }
@@ -61,21 +61,23 @@ public class NotificationService {
                 StringBuilder table = new StringBuilder();
                 table.append("<table style='border-collapse: collapse; width: 100%;'>");
                 table.append("<tr><th style='border: 1px solid #ddd; padding: 8px;'>Category</th><th style='border: 1px solid #ddd; padding: 8px;'>Amount</th></tr>");
+                int i =1;
                 for(ExpenseDTO expense : todaysExpenses){
-                    table.append("<tr><td style='border: 1px solid #ddd; padding: 8px;'>").append(expense.getCategoryName()).append("</td><td style='border: 1px solid #ddd; padding: 8px;'>").append(expense.getAmount()).append("</td></tr>");
+                    table.append("<tr><td style='border: 1px solid #ddd; padding: 8px;'>").append(i).append(". ").append(expense.getCategoryName()).append("</td><td style='border: 1px solid #ddd; padding: 8px;'>").append(expense.getAmount()).append("</td></tr>");
+                    i++;
                 }
                 table.append("</table>");
                 String body = String.format(
                     "<html><body style=\"font-family: Arial, sans-serif; color: #333;\">" +
                     "<p>Hi %s,</p>" +
                     "<p>This is a summary of your expenses for today:</p>" +
-                    "<p>%s</p>" +
+                    "%s" +
                     "<p><br><br>Best regards,<br>Money Manager Team</p>" +
                     "</body></html>",
                     HtmlUtils.htmlEscape(profile.getFullName()),
-                    HtmlUtils.htmlEscape(table.toString())
+                    table.toString()
                 );
-                emailService.sendEmail(profile.getEmail(), "Daily Expense Summary", body);
+                emailService.sendHtmlEmail(profile.getEmail(), "Daily Expense Summary", body);
             }
         }
     }
