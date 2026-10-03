@@ -6,6 +6,7 @@ import in.hardikexpense.moneymanager.entity.ProfileEntity;
 import in.hardikexpense.moneymanager.repository.ProfileRepository;
 import in.hardikexpense.moneymanager.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,6 +28,9 @@ public class ProfileService {
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
 
+    @Value("${app.activation.url}")
+    private String activationURL ;
+
     public ProfileDTO registerProfile(ProfileDTO profileDTO){
 
         ProfileEntity newProfile = toEntity(profileDTO);
@@ -34,7 +38,7 @@ public class ProfileService {
         newProfile = profileRepository.save(newProfile);
         // Send Activation Email
         String activationLink =
-                "http://localhost:8080/api/v1.0/activate?token=" + newProfile.getActivationToken();
+                activationURL + "/api/v1.0/activate?token=" + newProfile.getActivationToken();
         String subject = "MONEY MANAGER | Activate your Money Manager account";
         String emailBody = "Click on the following link to activate your account: " + activationLink;
         emailService.sendEmail(newProfile.getEmail(),subject,emailBody);
