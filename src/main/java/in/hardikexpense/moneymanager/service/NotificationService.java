@@ -59,11 +59,22 @@ public class NotificationService {
             List<ExpenseDTO> todaysExpenses = expenseService.getExpensesForUserOnDate(profile.getId(), LocalDate.now());
             if(!todaysExpenses.isEmpty()){
                 StringBuilder table = new StringBuilder();
-                table.append("<table style='border-collapse: collapse; width: 100%;'>");
-                table.append("<tr><th style='border: 1px solid #ddd; padding: 8px;'>Category</th><th style='border: 1px solid #ddd; padding: 8px;'>Amount</th></tr>");
-                int i =1;
+                table.append("<table style='border-collapse: collapse; width: 100%; border: 2px solid #2563eb;'>");
+                table.append("<thead><tr style='background-color: #2563eb; color: white;'>");
+                table.append("<th style='border: 1px solid #2563eb; padding: 12px; text-align: left; font-weight: bold;'>S.No</th>");
+                table.append("<th style='border: 1px solid #2563eb; padding: 12px; text-align: left; font-weight: bold;'>Name</th>");
+                table.append("<th style='border: 1px solid #2563eb; padding: 12px; text-align: left; font-weight: bold;'>Amount</th>");
+                table.append("<th style='border: 1px solid #2563eb; padding: 12px; text-align: left; font-weight: bold;'>Category</th>");
+                table.append("</tr></thead>");
+                int i = 1;
                 for(ExpenseDTO expense : todaysExpenses){
-                    table.append("<tr><td style='border: 1px solid #ddd; padding: 8px;'>").append(i).append(". ").append(expense.getCategoryName()).append("</td><td style='border: 1px solid #ddd; padding: 8px;'>").append(expense.getAmount()).append("</td></tr>");
+                    String rowBgColor = i % 2 == 0 ? "#f9fafb" : "#ffffff";
+                    table.append("<tr style='background-color: ").append(rowBgColor).append(";'>");
+                    table.append("<td style='border: 1px solid #e5e7eb; padding: 12px;'>").append(i).append("</td>");
+                    table.append("<td style='border: 1px solid #e5e7eb; padding: 12px;'>").append(HtmlUtils.htmlEscape(expense.getName())).append("</td>");
+                    table.append("<td style='border: 1px solid #e5e7eb; padding: 12px; font-weight: bold;'>₹").append(expense.getAmount()).append("</td>");
+                    table.append("<td style='border: 1px solid #e5e7eb; padding: 12px;'>").append(HtmlUtils.htmlEscape(expense.getCategoryName())).append("</td>");
+                    table.append("</tr>");
                     i++;
                 }
                 table.append("</table>");
