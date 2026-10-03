@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.HtmlUtils;
 
 import java.util.Map;
 import java.util.UUID;
@@ -36,12 +37,33 @@ public class ProfileService {
         ProfileEntity newProfile = toEntity(profileDTO);
         newProfile.setActivationToken((UUID.randomUUID().toString()));
         newProfile = profileRepository.save(newProfile);
-        // Send Activation Email
-        String activationLink =
-                activationURL + "/api/v1.0/activate?token=" + newProfile.getActivationToken();
-        String subject = "MONEY MANAGER | Activate your Money Manager account";
-        String emailBody = "Click on the following link to activate your account: " + activationLink;
-        emailService.sendEmail(newProfile.getEmail(),subject,emailBody);
+
+        // Send Activation Email (wrapped in try-catch so it doesn't block the response)
+        try {
+            String activationLink =
+                    activationURL + "/api/v1.0/activate?token=" + newProfile.getActivationToken();
+            String subject = "MONEY MANAGER | Activate your Money Manager account";
+            String emailBody = String.format(
+                    "<html><body style=\"font-family: Arial, sans-serif; color: #333;\">" +
+                            "<p>Hi %s,</p>" +
+                            "<p>Welcome to Money Manager! Please activate your account by clicking the button below:</p>" +
+                            "<p><a href=\"%s\" style=\"display: inline-block; padding: 10px 20px; " +
+                            "background-color: #2563eb; color: white; text-decoration: none; border-radius: 5px;\">" +
+                            "Activate Account</a></p>" +
+                            "<p>Or copy and paste this link: %s</p>" +
+                            "<p><br><br>Best regards,<br>Money Manager Team</p>" +
+                            "</body></html>",
+                    HtmlUtils.htmlEscape(newProfile.getFullName()),
+                    HtmlUtils.htmlEscape(activationLink),
+                    HtmlUtils.htmlEscape(activationLink)
+            );
+            emailService.sendHtmlEmail(newProfile.getEmail(), subject, emailBody);
+        } catch (Exception e) {
+            // Log error but don't block profile registration
+            System.err.println("⚠️ Failed to send activation email: " + e.getMessage());
+            e.printStackTrace();
+        }
+
         return toDTO(newProfile);
     }
 
