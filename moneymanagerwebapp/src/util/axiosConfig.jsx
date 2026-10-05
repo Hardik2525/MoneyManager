@@ -1,4 +1,5 @@
 import axios from "axios";
+import { BASE_URL } from "./apiEndpoints";
 
 export const axiosConfig = axios.create({
     baseURL: BASE_URL,
@@ -8,12 +9,10 @@ export const axiosConfig = axios.create({
     },
 });
 
-const excludeEndpoints = [["/login","/register","/status","/activate","/health"]];
+const excludeEndpoints = ["/login","/register","/status","/activate","/health"];
 
 axiosConfig.interceptors.request.use((config) => {
-    const shouldSkipToken = excludeEndpoints.some((endpoint )=>{
-        config.url?.includes(endpoint);
-    });
+    const shouldSkipToken = excludeEndpoints.some((endpoint) => config.url?.includes(endpoint));
     if(!shouldSkipToken){
         const token = localStorage.getItem("token");
         if(token){
@@ -39,3 +38,5 @@ axiosConfig.interceptors.response.use((response) => {
     }
     return Promise.reject(error);
 })
+
+export default axiosConfig;
