@@ -1,8 +1,10 @@
+import Dashboard from "../components/DashBoard";
+
 const Category = () => {
     return (
-        <div>
+        <Dashboard>
             <h1>Category</h1>
-        </div>
+        </Dashboard>
     )
 }
 

@@ -1,8 +1,10 @@
+import Dashboard from "../components/DashBoard";
+
 const Filter = () => {
     return (
-        <div>
+        <Dashboard>
             <h1>Filter</h1>
-        </div>
+        </Dashboard>
     )
 }
 
