@@ -1,8 +1,10 @@
 import { useState } from "react";
 import MenuBar from "./MenuBar";
 import SideMenu from "./SideMenu";
+import { useUser } from "../hooks/useUser";
 
 const Dashboard = ({ children }) => {
+    useUser();
     const [sidebarVisible, setSidebarVisible] = useState(false);
 
     const closeSidebar = () => setSidebarVisible(false);

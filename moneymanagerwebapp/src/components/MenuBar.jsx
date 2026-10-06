@@ -7,7 +7,7 @@ import { assets } from "../assets/assets";
 const MenuBar = ({ isOpen, setIsOpen }) => {
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
-    const { user, setUser } = useContext(AppContext);
+    const { user, clearUser } = useContext(AppContext);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -24,7 +24,7 @@ const MenuBar = ({ isOpen, setIsOpen }) => {
 
     const handleLogout = () => {
         localStorage.clear();
-        setUser(null);
+        clearUser();
         setShowDropdown(false);
         navigate("/login");
     };

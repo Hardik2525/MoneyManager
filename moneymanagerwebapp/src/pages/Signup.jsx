@@ -31,6 +31,7 @@ const Signup = () => {
 
         //signup API call
         try{
+            //upload profile image
             let profileImageUrl = "";
             if (profileImage) {
                 profileImageUrl = await uploadProfileImage(profileImage);
