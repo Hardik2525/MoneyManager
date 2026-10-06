@@ -1,17 +1,31 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Home from "./pages/Home";
+import { Toaster } from "react-hot-toast";
+import { LoaderCircle } from "lucide-react";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Category from "./pages/Category";
-import Income from "./pages/Income";
-import { Toaster } from "react-hot-toast";
-import Expense from "./pages/Expense";
-import Filter from "./pages/Filter";
+
+const Home = lazy(() => import("./pages/Home"));
+const Category = lazy(() => import("./pages/Category"));
+const Income = lazy(() => import("./pages/Income"));
+const Expense = lazy(() => import("./pages/Expense"));
+const Filter = lazy(() => import("./pages/Filter"));
+
+const PageLoader = () => (
+  <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 dark:bg-gray-950">
+    <LoaderCircle className="animate-spin w-8 h-8 text-purple-700" />
+  </div>
+);
 
 const App = () => {
   return (
     <BrowserRouter>
-      <Toaster />
+      <Toaster
+        toastOptions={{
+          className: "dark:!bg-gray-800 dark:!text-gray-100",
+        }}
+      />
+      <Suspense fallback={<PageLoader />}>
       <Routes>
         <Route path="/" element={<Root />} />
         <Route path="/dashboard" element={<Home />} />
@@ -23,6 +37,7 @@ const App = () => {
         <Route path="/filter" element={<Filter />} />
         <Route path="*" element={<Root />} />
       </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 };

@@ -7,6 +7,7 @@ import { LoaderCircle } from "lucide-react";
 import axiosConfig from "../util/axiosConfig";
 import { API_ENDPOINTS } from "../util/apiEndpoints";
 import { AppContext } from "../context/AppContext";
+import ThemeToggle from "../components/ThemeToggle";
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -46,15 +47,16 @@ const Login = () => {
 
     return (
         <div className="h-screen w-full relative flex items-center justify-center overflow-hidden">
+            <ThemeToggle className="absolute top-4 right-4 z-20" />
             {/*Background Image*/}
             <img src={assets.login_bg} alt="Background Image" className="absolute inset-0 w-full h-full object-cover filter blur-sm" />
 
             <div className="relative z-10 w-full max-w-lg px-6">
-                <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-2xl p-8 max-h-[90vh] overflow-y-auto">
-                    <h3 className="text-2xl font-semibold text-black text-center mb-2">
+                <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-lg shadow-2xl p-8 max-h-[90vh] overflow-y-auto">
+                    <h3 className="text-2xl font-semibold text-black dark:text-gray-100 text-center mb-2">
                         Welcome Back
                     </h3>
-                    <p className="text-sm text-slate-700 text-center mb-8">
+                    <p className="text-sm text-slate-700 dark:text-slate-300 text-center mb-8">
                         Please enter your details to log in.
                     </p>
 
@@ -75,7 +77,7 @@ const Login = () => {
                         />
 
                         {error && (
-                            <p className="text-red-800 text-sm text-center bg-red-50 p-2 rounded">{error}</p>
+                            <p className="text-red-800 dark:text-red-200 text-sm text-center bg-red-50 dark:bg-red-950 p-2 rounded">{error}</p>
                         )}
 
                         <button
@@ -93,9 +95,9 @@ const Login = () => {
                             )}
                         </button>
 
-                        <p className="text-sm text-slate-800 text-center mt-6">
+                        <p className="text-sm text-slate-800 dark:text-slate-200 text-center mt-6">
                             Don't have an account?{" "}
-                            <Link to="/signup" className="font-medium text-purple-700 underline hover:text-purple-900">
+                            <Link to="/signup" className="font-medium text-purple-700 dark:text-purple-300 underline hover:text-purple-900 dark:hover:text-purple-200">
                                 Sign up
                             </Link>
                         </p>

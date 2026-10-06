@@ -1,11 +1,5 @@
-import Dashboard from "../components/DashBoard";
+import TransactionsPage from "../components/TransactionsPage";
 
-const Income = () => {
-    return (
-        <Dashboard>
-            <h1>Income</h1>
-        </Dashboard>
-    )
-}
+const Income = () => <TransactionsPage type="income" />;
 
 export default Income;

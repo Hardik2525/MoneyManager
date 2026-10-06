@@ -23,6 +23,8 @@ public class IncomeService {
     private final IncomeRepository incomeRepository;
     private final CategoryRepository categoryRepository;
     private final ProfileService profileService;
+    private final ExcelService excelService;
+    private final EmailService emailService;
 
     public IncomeDTO addIncome(IncomeDTO incomeDTO) {
         ProfileEntity profile = profileService.getCurrentProfile();
@@ -71,6 +73,27 @@ public class IncomeService {
         List<IncomeEntity> list = incomeRepository.findByProfileIdAndDateBetweenAndNameContainingIgnoreCase
                 (profile.getId(),startDate,endDate,keyword,sort);
         return list.stream().map(this::mapToDTO).toList();
+    }
+
+    public byte[] getIncomeExcel() {
+        List<ExcelService.ExcelRow> rows = getCurrentMonthIncomesForCurrentUser().stream()
+                .map(income -> new ExcelService.ExcelRow(
+                        income.getName(), income.getCategoryName(), income.getDate(), income.getAmount()))
+                .toList();
+        return excelService.create("Income", rows);
+    }
+
+    public void emailIncomeExcel() {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        String body = "<p>Hi " + profile.getFullName() + ",</p>"
+                + "<p>Your income report for this month is attached.</p>";
+        emailService.sendHtmlEmailWithAttachment(
+                profile.getEmail(),
+                "Your income report",
+                body,
+                "income.xlsx",
+                getIncomeExcel()
+        );
     }
 
 

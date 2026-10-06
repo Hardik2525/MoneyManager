@@ -42,7 +42,7 @@ const ProfilePhotoSelector = ({ profileImage, setProfileImage }) => {
             />
 
             {!profileImage ? (
-                <div className="w-20 h-20 flex items-center justify-center bg-purple-100 rounded-full relative">
+                <div className="w-20 h-20 flex items-center justify-center bg-purple-100 dark:bg-purple-950 rounded-full relative">
                     <User className="text-purple-500" size={35} />
                     <button
                         onClick={onChooseFile}

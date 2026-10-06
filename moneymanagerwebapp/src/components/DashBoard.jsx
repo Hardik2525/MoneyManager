@@ -3,15 +3,19 @@ import MenuBar from "./MenuBar";
 import SideMenu from "./SideMenu";
 import { useUser } from "../hooks/useUser";
 
-const Dashboard = ({ children }) => {
+const Dashboard = ({ children, activeMenu }) => {
     useUser();
     const [sidebarVisible, setSidebarVisible] = useState(false);
 
     const closeSidebar = () => setSidebarVisible(false);
 
     return (
-        <div className="min-h-screen flex bg-gray-50">
-            <SideMenu sidebarVisible={sidebarVisible} onNavigate={closeSidebar} />
+        <div className="min-h-screen flex bg-gray-50 dark:bg-gray-950">
+            <SideMenu
+                sidebarVisible={sidebarVisible}
+                onNavigate={closeSidebar}
+                activeMenu={activeMenu}
+            />
 
             <div className="flex-1 flex flex-col min-w-0 min-h-screen">
                 <MenuBar

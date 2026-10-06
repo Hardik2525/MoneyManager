@@ -5,6 +5,17 @@
     <link rel="icon" type="image/svg+xml" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Money Manager</title>
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("darkMode");
+          var dark = stored === null
+            ? window.matchMedia("(prefers-color-scheme: dark)").matches
+            : stored === "true";
+          if (dark) document.documentElement.classList.add("dark");
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

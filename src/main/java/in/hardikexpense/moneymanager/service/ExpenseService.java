@@ -22,6 +22,8 @@ public class ExpenseService {
     private final ExpenseRepository expenseRepository;
     private final CategoryRepository categoryRepository;
     private final ProfileService profileService;
+    private final ExcelService excelService;
+    private final EmailService emailService;
 
     public ExpenseDTO addExpense(ExpenseDTO expenseDTO) {
        ProfileEntity profile = profileService.getCurrentProfile();
@@ -71,6 +73,27 @@ public class ExpenseService {
         List<ExpenseEntity> list = expenseRepository.findByProfileIdAndDateBetweenAndNameContainingIgnoreCase
                 (profile.getId(),startDate,endDate,keyword,sort);
         return list.stream().map(this::mapToDTO).toList();
+    }
+
+    public byte[] getExpenseExcel() {
+        List<ExcelService.ExcelRow> rows = getCurrentMonthExpensesForCurrentUser().stream()
+                .map(expense -> new ExcelService.ExcelRow(
+                        expense.getName(), expense.getCategoryName(), expense.getDate(), expense.getAmount()))
+                .toList();
+        return excelService.create("Expense", rows);
+    }
+
+    public void emailExpenseExcel() {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        String body = "<p>Hi " + profile.getFullName() + ",</p>"
+                + "<p>Your expense report for this month is attached.</p>";
+        emailService.sendHtmlEmailWithAttachment(
+                profile.getEmail(),
+                "Your expense report",
+                body,
+                "expense.xlsx",
+                getExpenseExcel()
+        );
     }
 
     //Notifications

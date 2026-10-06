@@ -9,6 +9,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Base64;
 
 @Service
 @Slf4j
@@ -34,20 +35,34 @@ public class EmailService {
     }
 
     public void sendHtmlEmail(String to, String subject, String body) {
-        send(to, subject, body, true);
+        send(to, subject, body, true, null, null);
+    }
+
+    public void sendHtmlEmailWithAttachment(String to, String subject, String body, String filename, byte[] file) {
+        send(to, subject, body, true, filename, file);
     }
 
     private void send(String to, String subject, String body, boolean html) {
+        send(to, subject, body, html, null, null);
+    }
+
+    private void send(String to, String subject, String body, boolean html, String filename, byte[] file) {
         if (apiKey == null || apiKey.isBlank()) {
             throw new IllegalStateException(
                     "BREVO_API_KEY is empty. Render free web services block SMTP ports 25, 465, and 587, so mail has to go through the Brevo HTTPS API.");
         }
         String contentField = html ? "htmlContent" : "textContent";
+        String attachment = "";
+        if (file != null && filename != null) {
+            attachment = ",\"attachment\":[{\"name\":" + json(filename)
+                    + ",\"content\":" + json(Base64.getEncoder().encodeToString(file)) + "}]";
+        }
         String payload = "{"
                 + "\"sender\":{\"name\":" + json(senderName) + ",\"email\":" + json(fromEmail) + "},"
                 + "\"to\":[{\"email\":" + json(to) + "}],"
                 + "\"subject\":" + json(subject) + ","
                 + "\"" + contentField + "\":" + json(body)
+                + attachment
                 + "}";
         try {
             log.info("Sending email via Brevo API to {}", to);

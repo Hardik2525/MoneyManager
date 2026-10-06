@@ -7,12 +7,12 @@ const Input = ({ label, value, onChange, placeholder, type }) => {
 
     return (
         <div className="mb-4">
-            <label className="text-[13px] text-slate-800 block mb-1">
+            <label className="text-[13px] text-slate-800 dark:text-slate-200 block mb-1">
                 {label}
             </label>
             <div className="relative">
                 <input
-                    className="w-full bg-transparent outline-none border border-gray-300 rounded-md py-2 px-3 pr-10 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
+                    className="w-full bg-transparent outline-none border border-gray-300 dark:border-gray-600 rounded-md py-2 px-3 pr-10 text-gray-700 dark:text-gray-100 leading-tight focus:outline-none focus:border-purple-700 placeholder:text-gray-400"
                     type={isPassword && showPassword ? "text" : type}
                     placeholder={placeholder}
                     value={value}
